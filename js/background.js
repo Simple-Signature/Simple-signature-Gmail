@@ -4,7 +4,7 @@
  * In case it isn't clear, this is licensed under the MIT License. So do with this what you please.
  *
  */
- 
+ var timestamp = null
 
 function onRequest(request, sender, sendResponse) {
   // Show the page action for the tab that the sender (content script)
@@ -18,34 +18,45 @@ function onRequest(request, sender, sendResponse) {
 // Listen for the content script to send a message to the background page.
 chrome.extension.onRequest.addListener(onRequest);
 
-// Called when the url of a tab changes.
-function checkForValidUrl(tabId, changeInfo, tab) {
-  console.info("If the letter 'g' is found in the tab's URL...");
-  if (tab.url.indexOf('/users/') > -1) {
-    console.info("show the page action.");
-    chrome.pageAction.setPopup({tabId:tabId, popup:"seFlairPageAction.html"});
-
-    chrome.pageAction.show(tabId);
-  }
-};
-// Listen for any changes to the URL of any tab.
-chrome.tabs.onUpdated.addListener(checkForValidUrl);
-
-
 chrome.runtime.onMessage.addListener(function(message, sender, sendResponse) {
-    console.info("onMessage :: ");
-    /*chrome.tabs.query({
-        active: true,               // Select active tabs
-        lastFocusedWindow: true     // In the current window
-    }, function(array_of_Tabs) {
-        // Since there can only be one active tab in one active window, 
-        //  the array has only one element
-        var tab = array_of_Tabs[0];
-        // Example:
-        var url = tab.url;
-        // ... do something with url variable
-        console.info(url);
-    });*/
-
-
+    if(message.message = "update simple signature's signature") {
+      if(timestamp == null || (new Date()).getTime()-timestamp > 5000) {
+        timestamp = (new Date()).getTime();
+        chrome.storage.local.get(null, function(items) {
+            if(items["simplesignature_URLSimpleSign"] == null) {
+                items["simplesignature_URLSimpleSign"] = "http://simplesignature.meteor.com/";
+                chrome.storage.local.set(items);
+            }
+            if(items["simplesignature_firm"] == null) {
+              alert("vous n'avez pas configurez Simple Signature. Cliquez sur l'icône dans la barre d'adresse.");
+              console.log(new Date())
+              sendResponse({message:'notOk'});
+              return;
+            }
+            console.info("getting signature from api");
+            var xhr = new XMLHttpRequest();
+            xhr.open("GET", items["simplesignature_URLSimpleSign"]+items["simplesignature_firm"]+"/"+items["simplesignature_service"], true);
+            xhr.onreadystatechange = function() {
+              console.log(xhr.responseText);
+              if (xhr.readyState == 4) {
+                if(xhr.status == 200) {
+                  if(items["simplesignature_signs"] == xhr.responseText) return;                
+                  items["simplesignature_signs"] = xhr.responseText.replace(/PATHAPPDATA/g, items["simplesignature_URLSimpleSign"]+"img/").replace(/VARIABLE_NAME/g, items["simplesignature_firstName"] + " " + items["simplesignature_lastName"]).replace(/VARIABLE_JOB/g, items["simplesignature_job"]).replace(/VARIABLE_PHONE/g, items["simplesignature_phone"]).replace(/VARIABLE_MAIL/g, items["simplesignature_mail"]);
+                  chrome.storage.local.set(items);
+                  sendResponse({message:'ok'});
+                  chrome.runtime.sendMessage({message:"updated simple signature's signature"});
+                } else if(xhr.status == 400) {
+                  alert(xhr.responseText);
+                  sendResponse({message:'notOk'});
+                }
+                else {
+                  alert(xhr.responseText);
+                  sendResponse({message:'notOk'});
+                }
+              }
+            }
+            xhr.send();        
+        });
+      }
+    }
 });

@@ -1,90 +1,71 @@
-// ==UserScript==
-// @name           Random Gmail Signature Quotes 
-// @namespace      http://google.com 
-// @author         jmort253 (http://stackoverflow.com/users/552792)
-// @description    Chrome Extension to inject random quotes into Gmail signatures.
-// @homepage       http://blog.opensourceopportunities.com
-// @copyright      2013, James Mortensen (http://stackoverflow.com/users/552792/jmort253) 
-// @license        MIT License or BSD License
-// @version        0.9.2
-// @include        https://*google.com/*
-// @history        0.9 initial beta release to the public in Github
-// @history        0.9.2 initial beta release to the public in the Chrome Web Store with Stack Exchange flair import support
-// ==/UserScript==
-
-/* 
- * Copyright 2013, James Mortensen
- *
- * In case it isn't clear, this is licensed under the MIT License. So do with this what you please.
- *
- */
 var regexMail = new RegExp("[a-z0-9!#\\$%&'\\*\\+/=\\?\\^_`\\{|\\}~\\-]{1,}(?:\\.[a-z0-9!#\\$%&'\\*\\+/=\\?\\^_`\\{|\\}~\\-]{1,}){0,}@(?:[a-z0-9](?:[a-z0-9\\-]{0,}[a-z0-9]){0,1}\\.){1,}[a-z0-9](?:[a-z0-9\\-]{0,}[a-z0-9]){0,1}", "g");
 var regexSign = new RegExp("((\\<div\\ id\\ =\\ \"signature\"\\>).{0,}?(\\</div\\>)|(\\<div\\ id=signature\\>).{0,}?(\\</div\\>))");
-var randomQuoteModule = {};
-
+var signModule = {};
 // bug: exclude/include userscript headers don't work in Chrome, so we filter manually
 if(window.location.hostname.match(/mail.google.com/) != null) {
 
     // insert the browser action icon in the address bar
     chrome.extension.sendRequest({}, function(response) {});
 
-     randomQuoteModule = {
+     signModule = {
         init: false,
         messageBox: null,
-        quotes: null,
-        loaded: false
+        sign: null
     };
 
- 
+    chrome.runtime.onMessage.addListener(function(message, sender, sendResponse) {
+        if(message.message = "updated simple signature's signature") {
+            chrome.storage.local.get(null, function(item) {
+                signModule.sign = JSON.parse(item["simplesignature_signs"]);
+            });
+        }
+    });
     // load jQuery from CDN...
     var script = document.createElement("script");
     script.setAttribute("src","//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js");
     document.getElementsByTagName("head")[0].appendChild(script);
 
 
-    // function to inject jQuery onto the page, as well as the randomQuoteModule object
-	function with_jquery(f, randomQuoteModule) {
+    // function to inject jQuery onto the page, as well as the signModule object
+	function with_jquery(f, signModule) {
 		var script = document.createElement("script");
 		script.type = "text/javascript";
-		script.textContent = "(" + f.toString() + ")(jQuery, "+JSON.stringify(randomQuoteModule)+")";
+		script.textContent = "(" + f.toString() + ")(jQuery, "+JSON.stringify(signModule)+")";
 		document.body.appendChild(script);
 	};
 
     // pull the quotes out of storage, or load the defaults from quotes.js if none found
-    chrome.storage.local.get(null, function(items) {
-        console.log("items = " + JSON.stringify(items) );iii = items;
-        if(items["m_quotes"] == null) {
-            items["m_quotes"] = m_quotes;
-            chrome.storage.local.set(items);
-        }
-        m_quotes = items["m_quotes"];
+    function load_sign() {
+        chrome.storage.local.get(null, function(items) {
+            if(items["simplesignature_signs"] == null) signModule.signLoaded = false;
+            else signModule.signLoaded = true;
+            chrome.runtime.sendMessage({message:"update simple signature's signature"},function(response){
+                if(response == "ok") {
+                    chrome.storage.local.get(null, function(item) {
+                        signModule.sign = JSON.parse(item["simplesignature_signs"]);
+                    }); 
+                }
+            });
+        });
+    };
 
-        randomQuoteModule.quotesLoaded = true;
-        if(randomQuoteModule.pageLoaded == true && randomQuoteModule.quotesLoaded == true) {
-            loadStageTwo();
-        }
 
-    });
+    load_sign();
 
     window.addEventListener("load", function() { 
-        randomQuoteModule.pageLoaded = true;
-        if(randomQuoteModule.pageLoaded == true && randomQuoteModule.quotesLoaded == true) {
-            loadStageTwo();
-        } 
+        loadStageTwo();
     });
         
 
     function loadStageTwo() {
-        if(randomQuoteModule.init == true) return;
+        if(signModule.init == true) return;
         
-        randomQuoteModule.init = true;
-        randomQuoteModule.quotes = m_quotes;
-    	
+        signModule.init = true;
 
-        with_jquery(function($, randomQuoteModule) {
+        with_jquery(function($, signModule) {
 
             // this handles injecting the quote into the Gmail compose textarea
-            function injectQuoteInTextarea() {
+            function injectSignInTextarea() {
 
                 var messageBox = null;
                 messageBox = $('[g_editable="true"]').eq($('[g_editable="true"]').length-1);
@@ -95,7 +76,7 @@ if(window.location.hostname.match(/mail.google.com/) != null) {
                 messageBox.interne=true;
                  destinataires.each(function(i,e) {
                     var mail = regexMail.exec(e.val());
-                    if(mail!=null && mail.split('@')[1] !=null && (localStorage["simple_signature_mail_interne"] == null || $.inArray(mail.split('@')[1],JSON.parse(localStorage["simple_signature_mail_interne"]))) ) 
+                    if(mail!=null && mail.split('@')[1] !=null && (localStorage["simplesignature_mailInterne"] == null || $.inArray(mail.split('@')[1],localStorage["simplesignature_mailInterne"].split(";"))) ) 
                         messageBox.interne=false;
                 });
                 // there's no signature block, so inject at the bottom
@@ -129,30 +110,28 @@ if(window.location.hostname.match(/mail.google.com/) != null) {
                
             }
 
-            
             function getSignature(interne) {
                 
-                var len = randomQuoteModule.quotes.length;
-
-                var index = (new Date().getTime() % len);
-
-                return randomQuoteModule.quotes[index];
-            }            
-
-            // TODO: trying to allow updating the quotes without reloading -- in progress
-            // top.window.updateRandomQuotes = function(quotes) {
-
-            //     randomQuoteModule.quotes = quotes;
-            // }
-            
+                if(!signModule.sign) {
+                    //load_sign();
+                    return "erreur, try again in a little while";
+                } 
+                else {
+                    jQuery.each(signModule.sign, function(i,e) {
+                        if((e.name =="externe default" && !interne) || (e.name =="interne default" && interne)) {
+                            return e.value;
+                        }
+                    });
+                }
+            }                        
 
             // when DOM nodes are inserted in the page, look for a compose window and inject
             window.addEventListener("DOMNodeInserted", function() {
-                    injectQuoteInTextarea();
+                    injectSignInTextarea();
             }, false);
             
              
-    	}, randomQuoteModule);
+    	}, signModule);
             
     };
 }

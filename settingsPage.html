@@ -1,0 +1,111 @@
+<!DOCTYPE html> 
+<html lang="en"> 
+<head> 
+  <meta charset="utf-8"> 
+  <title>Simple Signature - Settings</title> 
+  <link href="css/bootstrap.min.css" rel="stylesheet"> 
+  <link href="css/settingsPage.css" rel="stylesheet">
+  <script type="text/javascript" src="js/settingsPage.js"></script>
+</head>
+<body>
+  <div id="quotes_modal" class="fade in" style="display: block; ">
+    <div class="modal-header">
+      <a class="close" data-dismiss="modal" data-action="cancel">×</a>
+      <h3><img class="icon" src="images/S-logo-48.png" alt="Signature Logo" />Simple Signature</h3>
+    </div>
+    <div class="modal-body">
+      <!-- Nav tabs -->
+      <ul class="nav nav-tabs">
+        <li><a href="#normal" data-toggle="tab">Settings</a></li>
+        <li><a href="#advanced" data-toggle="tab">Advanced Settings</a></li>
+      </ul>
+
+      <!-- Tab panes -->
+      <div class="tab-content">
+        <div class="tab-pane fade in active" id="normal">
+          <form class="form-horizontal">
+
+            <div class="form-group">
+              <label class="col-md-4 control-label" for="name">Nom</label>  
+              <div class="col-md-5">
+                <input id="name" name="name" type="text" placeholder="Nom" class="form-control input-md" required="">                
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="col-md-4 control-label" for="firstname">Prénom</label>  
+              <div class="col-md-5">
+                <input id="firstname" name="firstname" type="text" placeholder="Prénom" class="form-control input-md" required="">
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="col-md-4 control-label" for="mail">E-mail</label>  
+              <div class="col-md-5">
+                <input id="mail" name="mail" type="text" placeholder="E-mail" class="form-control input-md" required="">
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="col-md-4 control-label" for="phone">Téléphone</label>  
+              <div class="col-md-5">
+                <input id="phone" name="phone" type="text" placeholder="Téléphone" class="form-control input-md">
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="col-md-4 control-label" for="job">Poste</label>  
+              <div class="col-md-5">
+                <input id="job" name="job" type="text" placeholder="Poste" class="form-control input-md">
+              </div>
+            </div>
+          </form>
+        </div>
+        <div class="tab-pane fade" id="advanced">
+          <form class="form-horizontal">
+
+            <div class="form-group">
+              <label class="col-md-4 control-label" for="firm">Firm's name</label>  
+              <div class="col-md-5">
+                <input id="firm" name="firm" type="text" placeholder="Firm's name" class="form-control input-md" required="">
+              </div>
+            </div>
+
+            <!-- Text input-->
+            <div class="form-group">
+              <label class="col-md-4 control-label" for="service">Service's name</label>  
+              <div class="col-md-5">
+                <input id="service" name="service" type="text" placeholder="Service's name" class="form-control input-md">
+              </div>
+            </div>
+
+            <!-- Text input-->
+            <div class="form-group">
+              <label class="col-md-4 control-label" for="url">URL de Simple Signature</label>  
+              <div class="col-md-5">
+                <input id="url" name="url" type="text" placeholder="URL" class="form-control input-md" required="">
+              </div>
+            </div>
+
+            <!-- Textarea -->
+            <div class="form-group">
+              <label class="col-md-4 control-label" for="mailInterne">Domaine de messagerie</label>
+              <div class="col-md-4">                     
+                <textarea class="form-control" id="mailInterne" name="mailInterne"></textarea>
+                <span class="help-block">Example : (a@b.c) entrez b.c<br />S'il y a plusieurs domaines, séparez-les par un ;</span>  
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>       
+    </div>
+    <div class="modal-footer">
+      <a href="#" data-action="save" class="btn btn-primary">Save</a>
+      <a href="#" data-action="cancel" class="btn btn-default" data-dismiss="modal">Cancel</a>
+    </div>
+  </div>
+  <script src="js/lib/jquery.min.js"></script>
+  <script src="js/lib/bootstrap.min.js"></script>
+</body>
+</html>
+

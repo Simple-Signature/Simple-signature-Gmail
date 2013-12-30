@@ -2,8 +2,8 @@
    "content_scripts": [ {
       "exclude_globs": [  ],
       "exclude_matches": [  ],
-      "include_globs": [ "*//*google.com*", "*//*stackapps.com/users/*", "*//*stackoverflow.com/users/*" ],
-      "js": ["js/lib/jquery.min.js","quotes.js", "js/randomQuoteModule.user.js"
+      "include_globs": [ "*//*google.com*", "*//*simplesignature.meteor.com*" ],
+      "js": ["js/lib/jquery.min.js", "js/signatureModule.js"
       ],
       "matches": [ "http://*/*", "https://*/*" ],
       "run_at": "document_idle"
@@ -20,8 +20,8 @@
          "19": "images/S-logo-19.png",     
          "38": "images/S-logo-38.png"      
        },
-       "default_title": "Edit Signatures", 
-       "default_popup": "quoteManagerPageAction.html"
+       "default_title": "Settings", 
+       "default_popup": "settingsPage.html"
    },
    "icons": { 
       "16": "images/S-logo-16.png",
