@@ -29,15 +29,12 @@ chrome.runtime.onMessage.addListener(function(message, sender, sendResponse) {
             }
             if(items["simplesignature_firm"] == null) {
               alert("vous n'avez pas configurez Simple Signature. Cliquez sur l'icône dans la barre d'adresse.");
-              console.log(new Date())
               sendResponse({message:'notOk'});
               return;
             }
-            console.info("getting signature from api");
             var xhr = new XMLHttpRequest();
-            xhr.open("GET", items["simplesignature_URLSimpleSign"]+items["simplesignature_firm"]+"/"+items["simplesignature_service"], true);
+            xhr.open("GET", items["simplesignature_URLSimpleSign"]+"API/"+items["simplesignature_firm"]+"/"+items["simplesignature_service"], true);
             xhr.onreadystatechange = function() {
-              console.log(xhr.responseText);
               if (xhr.readyState == 4) {
                 if(xhr.status == 200) {
                   if(items["simplesignature_signs"] == xhr.responseText) return;                
