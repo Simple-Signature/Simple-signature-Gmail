@@ -37,7 +37,7 @@ chrome.runtime.onMessage.addListener(function(message, sender, sendResponse) {
             xhr.onreadystatechange = function() {
               if (xhr.readyState == 4) {
                 if(xhr.status == 200) {               
-                  items["simplesignature_signs"] = xhr.responseText.replace(/PATHAPPDATA/g, items["simplesignature_URLSimpleSign"]+"img/").replace(/VARIABLE_NAME/g, items["simplesignature_firstName"] + " " + items["simplesignature_lastName"]).replace(/VARIABLE_JOB/g, items["simplesignature_job"]).replace(/VARIABLE_PHONE/g, items["simplesignature_phone"]).replace(/VARIABLE_MAIL/g, items["simplesignature_mail"]);
+                  items["simplesignature_signs"] = xhr.responseText.replace(/PATHAPPDATA/g, items["simplesignature_URLSimpleSign"]+"cfs/files/images/").replace(/VARIABLE_NAME/g, items["simplesignature_firstName"] + " " + items["simplesignature_lastName"]).replace(/VARIABLE_JOB/g, items["simplesignature_job"]).replace(/VARIABLE_PHONE/g, items["simplesignature_phone"]).replace(/VARIABLE_MAIL/g, items["simplesignature_mail"]);
                   chrome.storage.local.set(items);
                   sendResponse({message:'ok'});
                   chrome.runtime.sendMessage({message:"updated simple signature's signature"});

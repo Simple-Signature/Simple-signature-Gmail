@@ -1,5 +1,5 @@
 var regexMail = new RegExp("[a-z0-9!#\\$%&'\\*\\+/=\\?\\^_`\\{|\\}~\\-]{1,}(?:\\.[a-z0-9!#\\$%&'\\*\\+/=\\?\\^_`\\{|\\}~\\-]{1,}){0,}@(?:[a-z0-9](?:[a-z0-9\\-]{0,}[a-z0-9]){0,1}\\.){1,}[a-z0-9](?:[a-z0-9\\-]{0,}[a-z0-9]){0,1}", "g");
-var regexSign = new RegExp("((\\<div\\ id\\ =\\ \"signature\"\\>).{0,}?(\\</div\\>)|(\\<div\\ id=signature\\>).{0,}?(\\</div\\>))");
+var regexSign = new RegExp("((\\<div\\ id\\ =\"signature\"\\>).{0,}?(\\</div\\>)|(\\<div\\ id=signature\\>).{0,}?(\\</div\\>))");
 var signModule = {};
 // bug: exclude/include userscript headers don't work in Chrome, so we filter manually
 if(window.location.hostname.match(/mail.google.com/) != null) {
@@ -104,13 +104,13 @@ if(window.location.hostname.match(/mail.google.com/) != null) {
                     // assuming there is a textarea, inject a quote
                     if(messageBox != null && messageBox.action == "init") {
                         setTimeout(function() {
-                            messageBox.html("<br /><br />"+getSignature(messageBox.interne));
+                            messageBox.html("<br /><br /><div id=\"signature\">"+getSignature(messageBox.interne)+"</div>");
                             messageBox.action = "replace";
                         }, 1000);
                     }
                     else if(messageBox != null && messageBox.action == "replace") {
                         setTimeout(function() {
-                            messageBox.html(messageBox.html().replace(regexSign,getSignature(messageBox.interne)));
+                            messageBox.html(messageBox.html().replace(regexSign,"<div id=\"signature\">"+getSignature(messageBox.interne)+"</div>"));
                         }, 1000);
                     }
                    
