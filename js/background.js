@@ -33,7 +33,7 @@ chrome.runtime.onMessage.addListener(function(message, sender, sendResponse) {
               return;
             }
             var xhr = new XMLHttpRequest();
-            xhr.open("GET", items["simplesignature_URLSimpleSign"]+"API/"+items["simplesignature_firm"]+"/"+items["simplesignature_service"], true);
+            xhr.open("GET", items["simplesignature_URLSimpleSign"]+"API/signs/"+items["simplesignature_firm"]+"/"+items["simplesignature_service"], true);
             xhr.onreadystatechange = function() {
               if (xhr.readyState == 4) {
                 if(xhr.status == 200) {               
