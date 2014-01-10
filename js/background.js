@@ -46,7 +46,7 @@ chrome.runtime.onMessage.addListener(function(message, sender, sendResponse) {
                   sendResponse({message:'notOk'});
                 }
                 else {
-                  alert(xhr.responseText);
+                  //alert(xhr.responseText);
                   sendResponse({message:'notOk'});
                 }
               }
